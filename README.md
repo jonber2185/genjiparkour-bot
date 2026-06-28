@@ -1,6 +1,6 @@
 # Overwatch Genji Parkour Discord Bot
 
-> A specialized Discord bot for the Overwatch Genji Parkour community.
+> A specialized Discord bot for the Overwatch Genji Parkour community.<br>
 > If you're interested, Come and join us via [this link](https://discord.gg/CqS2sJaGd)
 
 [한국어](README.ko.md)
@@ -9,8 +9,9 @@
 
 ## Overview
 
-This bot helps manage the Genji Parkour community on Discord. 
+This bot helps manage the Genji Parkour community on Discord.
 It provides parkour code registration and browsing, a clear board for recording challenge completions, and an anonymous messaging system.
+
 
 ## Features
 
@@ -37,6 +38,7 @@ It provides parkour code registration and browsing, a clear board for recording 
 - **Reply** to an anonymous message thread
 - **Block** a user from sending anonymous messages (moderator only)
 - Log view for moderators to trace anonymous message authors
+
 
 ## Setup
 

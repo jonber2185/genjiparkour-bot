@@ -27,7 +27,7 @@ async def code_autocomplete(
 
 
 special_creators = {
-    "MANTA": "💩",
+    "MANTA": "💙",
     "뽈롱뽈롱뽀로로": "🐧",
     "SUNTREE": "🌞🌳",
     "DOLCE": "🧹",

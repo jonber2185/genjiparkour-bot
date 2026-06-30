@@ -13,7 +13,6 @@ from errors import errors
     show_list="명단 보기 (True 설정)",
 )
 @app_commands.default_permissions(administrator=True)
-@app_commands.checks.has_permissions(manage_channels=True)
 async def block_anonymous_command(
     interaction: discord.Interaction,
     block_user: discord.Member = None,

@@ -63,7 +63,7 @@ class ClearLogView(ui.View):
             new_role = discord.utils.get(interaction.guild.roles, name=new_tier)
 
             if old_role and old_role in content.user_info.roles:
-                await content.user_info.remove_roles(old_role)
+                if old_role.name != "G": await content.user_info.remove_roles(old_role)
             if new_role:
                 await content.user_info.add_roles(new_role)
 

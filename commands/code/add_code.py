@@ -26,7 +26,6 @@ from .. import utils
 @app_commands.autocomplete(creator=utils.creator_autocomplete)
 @app_commands.choices(difficulty=utils.DIFFICULTY_CHOICES)
 @app_commands.default_permissions(administrator=True)
-@app_commands.checks.has_permissions(manage_channels=True)
 async def add_code_command(
     interaction: discord.Interaction,
     code: str,

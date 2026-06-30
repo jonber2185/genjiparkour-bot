@@ -9,7 +9,6 @@ from ..utils import map_autocomplete
 @app_commands.describe(current_map_name="기존 맵 이름", new_map_name="새로운 맵 이름")
 @app_commands.autocomplete(current_map_name=map_autocomplete)
 @app_commands.default_permissions(administrator=True)
-@app_commands.checks.has_permissions(manage_channels=True)
 async def edit_map_command(
     interaction: discord.Interaction,
     current_map_name: str,

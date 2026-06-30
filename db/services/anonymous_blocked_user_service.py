@@ -1,5 +1,6 @@
 from sqlite3 import IntegrityError
 from db.repositories import user_repository
+from errors import errors
 
 
 class AnonymousBlockedUserService:
@@ -19,10 +20,5 @@ class AnonymousBlockedUserService:
 
     def block_user(self, user_id: int, is_blocked: bool):
         user_id = int(user_id)
-        try:
-            self.repository.update(user_id=user_id, is_blocked=is_blocked)
-        except IntegrityError as e:
-            if "FOREIGN KEY" not in str(e):
-                raise
-            self.repository.insert(user_id)
-            self.repository.update(user_id=user_id, is_blocked=is_blocked)
+        if self.is_blocked(user_id) and is_blocked: raise errors.DBError.DuplicateError("이미 차단된 유저입니다.")
+        self.repository.update(user_id=user_id, is_blocked=is_blocked)

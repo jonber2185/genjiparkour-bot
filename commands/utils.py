@@ -8,22 +8,26 @@ async def map_autocomplete(
     interaction: discord.Interaction,
     current: str,
 ) -> list[app_commands.Choice[str]]:
-    maps = map_autocomplete_service.get_suggestions(current)
-    return [
-        app_commands.Choice(name=m, value=m)
-        for m in maps
-    ]
+    try:
+        maps = map_autocomplete_service.get_suggestions(current)
+        return [
+            app_commands.Choice(name=m, value=m)
+            for m in maps
+        ]
+    except discord.NotFound: pass
 
 
 async def code_autocomplete(
     interaction: discord.Interaction,
     current: str,
 ) -> list[app_commands.Choice[str]]:
-    codes = code_autocomplete_service.get_code_suggestions(current)
-    return [
-        app_commands.Choice(name=f"{code['code']} ({code['map_name']})", value=code['code'])
-        for code in codes
-    ]
+    try:
+        codes = code_autocomplete_service.get_code_suggestions(current)
+        return [
+            app_commands.Choice(name=f"{code['code']} ({code['map_name']})", value=code['code'])
+            for code in codes
+        ]
+    except discord.NotFound: pass
 
 
 special_creators = {

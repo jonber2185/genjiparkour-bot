@@ -9,7 +9,6 @@ from ..utils import map_autocomplete
 @app_commands.describe(map_name="맵 이름")
 @app_commands.autocomplete(map_name=map_autocomplete)
 @app_commands.default_permissions(administrator=True)
-@app_commands.checks.has_permissions(manage_channels=True)
 async def remove_map_command(interaction: discord.Interaction, map_name: str):
     await interaction.response.defer(ephemeral=True)
 

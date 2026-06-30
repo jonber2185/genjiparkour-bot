@@ -10,7 +10,6 @@ from errors import errors
 @app_commands.describe(user="유저", code="코드")
 @app_commands.autocomplete(code=code_autocomplete)
 @app_commands.default_permissions(administrator=True)
-@app_commands.checks.has_permissions(manage_channels=True)
 async def clear_cancel_command(
     interaction: discord.Interaction,
     user: discord.Member,

@@ -9,7 +9,6 @@ from ..utils import code_autocomplete
 @app_commands.describe(code="삭제할 코드 (5자리)")
 @app_commands.autocomplete(code=code_autocomplete)
 @app_commands.default_permissions(administrator=True)
-@app_commands.checks.has_permissions(manage_channels=True)
 async def delete_code_command(interaction: discord.Interaction, code: str):
     await interaction.response.defer(ephemeral=True)
 

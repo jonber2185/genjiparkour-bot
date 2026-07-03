@@ -10,11 +10,13 @@ async def map_autocomplete(
 ) -> list[app_commands.Choice[str]]:
     try:
         maps = map_autocomplete_service.get_suggestions(current)
-        return [
+        choices = [
             app_commands.Choice(name=m, value=m)
             for m in maps
-        ]
-    except discord.NotFound: pass
+        ][:25]
+        await interaction.response.autocomplete(choices)
+    except (discord.NotFound, discord.HTTPException):
+        return []
 
 
 async def code_autocomplete(
@@ -23,11 +25,13 @@ async def code_autocomplete(
 ) -> list[app_commands.Choice[str]]:
     try:
         codes = code_autocomplete_service.get_code_suggestions(current)
-        return [
+        choices = [
             app_commands.Choice(name=f"{code['code']} ({code['map_name']})", value=code['code'])
             for code in codes
-        ]
-    except discord.NotFound: pass
+        ][:25]
+        await interaction.response.autocomplete(choices)
+    except (discord.NotFound, discord.HTTPException):
+        return []
 
 
 special_creators = {
@@ -45,14 +49,16 @@ async def creator_autocomplete(
     try:
         creators = code_autocomplete_service.get_creators_suggestions(current)
         sorted_creators = sorted(creators, key=lambda x: '&' in x)
-        return [
+        choices = [
             app_commands.Choice(
                 name=f"{special_creators[creator]} {creator}" if creator in special_creators else creator,
                 value=creator
             )
             for creator in sorted_creators
-        ]
-    except discord.NotFound: pass
+        ][:25]
+        await interaction.response.autocomplete(choices)
+    except (discord.NotFound, discord.HTTPException):
+        return []
 
 
 DIFFICULTY_CHOICES = [app_commands.Choice(name=d.value, value=d.value) for d in Difficulty]

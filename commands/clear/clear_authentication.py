@@ -1,7 +1,9 @@
+import io
 import os
 from dotenv import load_dotenv
 import discord
 from discord import app_commands
+from PIL import Image
 from db.services import code_service
 from ._log_view import ClearLogView
 from ..utils import code_autocomplete
@@ -37,20 +39,21 @@ async def clear_authentication_command(
     if log_channel is None:
         log_channel = await interaction.guild.fetch_channel(CLEAR_CHANNEL_ID)
 
-    cp_display = f"{code_info.cp}cp" if code_info.cp is not None else "데이터 없음"
     log_embed = discord.Embed(
         title="클리어 인증 요청",
         description=(
             f"**맵 코드:** `{code}`\n"
-            f"**난이도:** `{code_info.difficulty.value}`\n"
-            f"**체크포인트:** {cp_display}\n"
+            f"난이도: `{code_info.difficulty.value}`\n"
             f"**기록:** {clear_time:.2f}초\n"
             f"**유저:** {interaction.user.mention} #{interaction.user.id}"
         ),
         color=discord.Color.green(),
     )
-    log_embed.set_image(url=screenshot.url)
+    log_embed.set_thumbnail(url=screenshot.url)
+    cropped_file = await crop_image(screenshot)
+    log_embed.set_image(url=f"attachment://{cropped_file.filename}")
     await log_channel.send(
+        file=cropped_file,
         embed=log_embed,
         view=ClearLogView(),
         allowed_mentions=discord.AllowedMentions.none(),
@@ -67,3 +70,23 @@ async def clear_authentication_command(
     )
     embed.set_image(url=screenshot.url)
     await interaction.followup.send(embed=embed, ephemeral=True)
+
+
+async def crop_image(screenshot: discord.Attachment) -> discord.File:
+    image_bytes = await screenshot.read()
+
+    img = Image.open(io.BytesIO(image_bytes))
+    width, height = img.size
+
+    if width > 450 or height > 300:
+        cropped_img = img.crop((0, 0, 450, 300))
+    else:
+        cropped_img = img.crop((0, 0, width, height))
+    
+    output_buffer = io.BytesIO()
+    cropped_img.save(output_buffer, format="PNG")
+    output_buffer.seek(0)
+
+    file = discord.File(fp=output_buffer, filename="cropped_screenshot.png")
+
+    return file

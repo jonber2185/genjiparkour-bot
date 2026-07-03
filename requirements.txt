@@ -1,3 +1,4 @@
 discord==2.3.2
 python-dotenv==1.2.2
 pydantic==2.13.4
+Pillow==12.3.0

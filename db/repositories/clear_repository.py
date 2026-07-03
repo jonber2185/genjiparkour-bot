@@ -11,7 +11,7 @@ class ClearRepository(BaseRepository):
         SELECT user_id, code, clear_time
         FROM user_clears
         WHERE code = ?
-        ORDER BY clear_time DESC
+        ORDER BY clear_time ASC
         LIMIT 10
         """
         rows = self.fetch(sql, (code.upper(),))

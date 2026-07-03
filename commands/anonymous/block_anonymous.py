@@ -19,10 +19,10 @@ async def block_anonymous_command(
     unblock_user: discord.Member = None,
     show_list: bool = False,
 ):
+    await interaction.response.defer(ephemeral=True)
+
     if not any([block_user, unblock_user, show_list]):
         raise errors.DBError.DataValidationError("`차단`, `차단해제`, `명단` 중 **최소 하나 이상**은 입력해야 합니다.")
-
-    await interaction.response.defer(ephemeral=True)
 
     embeds = []
 

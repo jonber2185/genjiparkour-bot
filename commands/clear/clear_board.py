@@ -20,10 +20,10 @@ async def clear_board_command(
     code: str = None,
     clear_user: discord.Member = None,
 ):
+    await interaction.response.defer(ephemeral=True)
+
     if code is not None and clear_user is not None:
         raise errors.DBError.DataValidationError("조건은 **최대 한개**까지 입력 가능합니다.")
-
-    await interaction.response.defer(ephemeral=True)
 
     if code is not None:
         await _send_code_board(interaction, code.upper())

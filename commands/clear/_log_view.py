@@ -16,6 +16,7 @@ CLEAR_PUB_CHANNEL_ID = int(os.getenv("CLEAR_PUB_CHANNEL_ID"))
 @dataclass
 class ClearLogContent:
     map_code: str
+    difficulty: str
     clear_time: float
     user_info: discord.Member
     img_url: str
@@ -81,6 +82,7 @@ class ClearLogView(ui.View):
             title="👍 요청이 정상적으로 처리되었습니다.",
             description=(
                 f"**맵 코드:** `{content.map_code}`\n"
+                f"**난이도**: `{content.difficulty}`\n"
                 f"**기록:** {content.clear_time:.2f}초\n"
                 f"**유저:** {content.user_info.mention}\n"
                 f"**인증자:** {interaction.user.mention}"
@@ -94,12 +96,14 @@ class ClearLogView(ui.View):
             for line in interaction.message.embeds[0].description.split("\n")
         ]
         map_code  = lines[0].replace("`", "").split("맵 코드: ", 1)[-1]
+        difficulty = lines[1].replace("`", "").split("난이도: ", 1)[-1]
         clear_time = float(lines[3].replace("초", "").split("기록: ", 1)[-1])
         user_id   = lines[4].split("유저: ", 1)[-1].split("#")[-1]
         user_info = await get_user_by_id(interaction=interaction, user_id=int(user_id))
 
         return ClearLogContent(
             map_code=map_code,
+            difficulty=difficulty,
             clear_time=clear_time,
             user_info=user_info,
             img_url=interaction.message.embeds[0].image.url,

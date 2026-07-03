@@ -34,6 +34,7 @@ class PaginationView(ui.View):
         start = self.current_page * self.per_page
         page_data = self.data_list[start:start + self.per_page]
 
+        self.default_embed.clear_fields()
         current_diff = ""
         for clear_info in page_data:
             clear_diff = clear_info.difficulty.value.replace("+", "").replace("-", "")

@@ -36,19 +36,15 @@ async def clear_board_command(
 async def _send_code_board(interaction: discord.Interaction, code: str):
     clear_list: list[ClearEntity] = clear_service.get_clear_users(code)
 
-    embed = discord.Embed(title=f"🏆 **`{code}`** 클리어 현황", color=discord.Color.green())
+    embed = discord.Embed(title=f"🏆 **`{code}`** 클리어 현황", description="", color=discord.Color.green())
 
     if not clear_list:
         embed.description = "클리어한 유저가 없습니다."
     else:
         for idx, cl in enumerate(clear_list):
             user_obj = await get_user_by_id(interaction, cl.user_id)
-            user_display = user_obj.display_name if user_obj else f"퇴장한 유저 #{cl.user_id}"
-            embed.add_field(
-                name=f"**{_medal(idx)} {user_display}**",
-                value=f"> 기록: **`{cl.clear_time}`**초",
-                inline=False,
-            )
+            user_display = user_obj.mention if user_obj else f"(퇴장한 유저)"
+            embed.description += f"{_medal(idx)} {user_display} **#`{cl.clear_time}`초**\n"
 
     await interaction.followup.send(embed=embed, ephemeral=True)
 
@@ -60,7 +56,13 @@ async def _send_user_board(interaction: discord.Interaction, clear_user: discord
 
     embed = discord.Embed(
         title=f"👏 {clear_user.display_name}님의 클리어 현황",
-        description=f"**티어: `{t.tier}`**\n",
+        description=f"**티어: `{t.tier}`**\n"
+        f"> Easy: {t.easy_count}\n"
+        f"> Medium: {t.medium_count}\n"
+        f"> Hard: {t.hard_count}\n"
+        f"> VeryHard: {t.veryhard_count}\n"
+        f"> Extreme: {t.extreme_count}\n"
+        f"> Hell: {t.hell_count}",
         color=discord.Color.green(),
     )
 
@@ -79,26 +81,45 @@ async def _send_user_board(interaction: discord.Interaction, clear_user: discord
 async def _send_top_board(interaction: discord.Interaction):
     clear_list: list[TierEntity] = clear_service.get_users_tier()
 
-    embed = discord.Embed(title="🏆 TOP 10", color=discord.Color.green())
+    embed = discord.Embed(title="🏆  TOP 10", color=discord.Color.green())
 
     if not clear_list:
         embed.description = "클리어한 유저가 없습니다."
-    else:
-        for idx, cl in enumerate(clear_list):
-            user_obj = await get_user_by_id(interaction, cl.user_id)
-            user_display = user_obj.mention if user_obj else "(퇴장한 유저)"
-            embed.add_field(
-                name="",
-                value=(
-                    f"**{_medal(idx)} {user_display}** `{cl.tier}`\n"
-                    f"> Easy: {cl.easy_count}\n"
-                    f"> Medium: {cl.medium_count}\n"
-                    f"> Hard: {cl.hard_count}\n"
-                    f"> VeryHard: {cl.veryhard_count}\n"
-                    f"> Extreme: {cl.extreme_count}\n"
-                    f"> Hell: {cl.hell_count}"
-                ),
-                inline=False,
-            )
+        await interaction.followup.send(embed=embed, ephemeral=True)
+        return
 
-    await interaction.followup.send(embed=embed, ephemeral=True)
+    first_user = clear_list[0]
+    first_user_obj = await get_user_by_id(interaction, first_user.user_id)
+    first_user_display = f"{first_user_obj.mention}" if first_user_obj else "(퇴장한 유저)"
+    embed.description = f"""
+        **{_medal(0)} {first_user_display}** `{first_user.tier}`
+        > Easy: {first_user.easy_count}
+        > Medium: {first_user.medium_count}
+        > Hard: {first_user.hard_count}
+        > VeryHard: {first_user.veryhard_count}
+        > Extreme: {first_user.extreme_count}
+        > Hell: {first_user.hell_count}
+    """
+    if first_user_obj:
+        embed.set_thumbnail(url=first_user_obj.display_avatar.url)
+
+    bottom_embed = discord.Embed(color=discord.Color.green())
+    for idx, cl in enumerate(clear_list):
+        if idx == 0: continue
+        user_obj = await get_user_by_id(interaction, cl.user_id)
+        user_display = f"{user_obj.display_name}" if user_obj else "(퇴장한 유저)"
+
+        bottom_embed.add_field(
+            name=f"**{_medal(idx)} {user_display}** `{cl.tier}`\n",
+            value=(
+                f"> Easy: {cl.easy_count}\n"
+                f"> Medium: {cl.medium_count}\n"
+                f"> Hard: {cl.hard_count}\n"
+                f"> VeryHard: {cl.veryhard_count}\n"
+                f"> Extreme: {cl.extreme_count}\n"
+                f"> Hell: {cl.hell_count}"
+            ),
+            inline=True,
+        )
+
+    await interaction.followup.send(embeds=[embed, bottom_embed], ephemeral=True)

@@ -38,7 +38,7 @@ special_creators = {
     "MANTA": "💙",
     "뽈롱뽈롱뽀로로": "🐧",
     "SUNTREE": "🌞🌳",
-    "DOLCE": "🧹",
+    "DOLCE": "💪🧹",
     "엄준식화이팅": "🕵️"
 }
 

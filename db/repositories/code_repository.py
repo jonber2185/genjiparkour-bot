@@ -14,18 +14,12 @@ class CodeRepository(BaseRepository):
         map_name: str = None,
         difficulty: str = None,
         creator: str = None,
-        code: str = None,
+        rand: str = None,
     ) -> list[CodeEntity]:
         sql = """
         SELECT
-            c.code,
-            c.map_name,
-            c.difficulty,
-            c.creator,
-            c.cp,
-            c.description,
-            c.guide,
-            u.clear_time
+            c.code, c.map_name, c.difficulty, c.creator,
+            c.cp, c.description, c.guide, u.clear_time
         FROM codes c
         LEFT JOIN user_clears u
             ON c.code = u.code
@@ -34,19 +28,18 @@ class CodeRepository(BaseRepository):
         """
         params = [user_id]
 
-        filters = {
-            "map_name":   map_name,
-            "difficulty": difficulty,
-            "code":       code.upper() if code else None,
-        }
-        for column, value in filters.items():
-            if value is not None:
-                sql += f" AND c.{column} = ?"
-                params.append(value)
-            
+        if map_name is not None:
+            sql += " AND c.map_name = ?"
+            params.append(map_name)
+        if difficulty is not None:
+            sql += " AND c.difficulty = ?"
+            params.append(difficulty)
         if creator is not None:
-            sql += " AND creator LIKE ?"
+            sql += " AND c.creator LIKE ?"
             params.append(f"%{creator.upper()}%")
+        if rand is not None:
+            if rand == "exclude": sql += " AND u.clear_time IS NULL"
+            sql += " ORDER BY RANDOM() LIMIT 1"
 
         rows = self.fetch(sql, tuple(params))
         results = [CodeEntity.model_validate(row) for row in rows]
@@ -54,7 +47,7 @@ class CodeRepository(BaseRepository):
         return results
 
     def find_code(self, code: str) -> CodeEntity | None:
-        row = self.fetch("SELECT * FROM codes WHERE code = ?", (code,), fetchone=True)
+        row = self.fetch("SELECT * FROM codes WHERE code = ?", (code.upper(),), fetchone=True)
         return CodeEntity.model_validate(row) if row else None
 
     ### INSERT ###

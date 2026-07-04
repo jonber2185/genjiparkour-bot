@@ -54,10 +54,10 @@ class PaginationView(ui.View):
             lines = [
                 f"> 코드 : **`{code.code}` {clear_time}**",
                 f"> 난이도: {code.difficulty.value}",
-                f"> 제작자 : {creator}",
             ]
             if code.cp:          lines.append(f"> 체크포인트 : {code.cp}cp")
             if code.description: lines.append(f"> 설명 : {code.description}")
+            lines.append(f"> 제작자 : {creator}")
             if code.guide:       lines.append(f"> [가이드]({code.guide})")
 
             embed.add_field(name="", value="\n".join(lines), inline=False)

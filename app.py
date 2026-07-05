@@ -39,6 +39,7 @@ class GenjiParkourBot(commands.Bot):
             ("commands.anonymous", "AnonymousCommands"),
             ("commands.clear",     "ClearCommands"),
             ("errors.base",        "에러핸들러"),
+            ("commands.cleanup",   "청소"),
         ]
         for ext, label in extensions:
             await self.load_extension(ext)

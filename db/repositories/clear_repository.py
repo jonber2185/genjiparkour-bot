@@ -11,8 +11,8 @@ class ClearRepository(BaseRepository):
         SELECT user_id, code, clear_time
         FROM user_clears
         WHERE code = ?
-        ORDER BY clear_time DESC
-        LIMIT 10
+        ORDER BY clear_time ASC
+        LIMIT 20
         """
         rows = self.fetch(sql, (code.upper(),))
         return [ClearEntity.model_validate(row) for row in rows]

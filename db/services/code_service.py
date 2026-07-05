@@ -11,10 +11,9 @@ class CodeService:
     def __init__(self):
         self.repository = code_repository
 
-    def load_memory(self):
-        return [row['code'] for row in self.repository.select_codes()]
-
     def get_code(self, code: str) -> CodeEntity:
+        if len(code) < _MIN_CODE_LENGTH:
+            raise errors.DBError.DataValidationError("워크샵 코드는 5글자 이상이어야 합니다.")
         return self.repository.find_code(code)
 
     def get_codes(
@@ -23,15 +22,13 @@ class CodeService:
         map_name: str = None,
         difficulty: str = None,
         creator: str = None,
-        code: str = None,
+        rand: str = None,
     ) -> list[CodeEntity]:
-        if not any([map_name, difficulty, creator, code]):
+        if rand is None and not any([map_name, difficulty, creator]):
             raise errors.DBError.DataValidationError(
-                "`전장`, `난이도`, `제작자`, `코드` 중 **최소 하나 이상**은 입력해야 합니다."
+                "`전장`, `난이도`, `제작자` 중 **최소 하나 이상**은 입력해야 합니다."
             )
-        if code is not None and len(code) < _MIN_CODE_LENGTH:
-            raise errors.DBError.DataValidationError("워크샵 코드는 5글자 이상이어야 합니다.")
-        return self.repository.select(int(user_id), map_name, difficulty, creator, code)
+        return self.repository.select(int(user_id), map_name, difficulty, creator, rand)
 
     def add_code(
         self,

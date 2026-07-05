@@ -4,6 +4,9 @@ from .base_repository import BaseRepository
 class UserRepository(BaseRepository):
 
     ### SELECT ###
+    def select(self) -> list[dict]:
+        return self.fetch("SELECT user_id FROM users")
+
     def find_user(self, user_id: int) -> dict | None:
         return self.fetch(
             "SELECT is_blocked FROM users WHERE user_id = ?",
@@ -26,5 +29,6 @@ class UserRepository(BaseRepository):
         )
 
     ### DELETE ###
-    def delete(self, user_id: int):
-        self.execute("DELETE FROM users WHERE user_id = ?", (user_id,))
+    def delete(self, user_ids: list[int]):
+        placeholders = ','.join('?' for _ in user_ids)
+        self.execute(f"DELETE FROM users WHERE user_id IN ({placeholders})", tuple(user_ids))

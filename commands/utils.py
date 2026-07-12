@@ -49,13 +49,16 @@ async def creator_autocomplete(
     try:
         creators = code_autocomplete_service.get_creators_suggestions(current)
         sorted_creators = sorted(creators, key=lambda x: '&' in x)
-        choices = [
-            app_commands.Choice(
-                name=f"{special_creators[creator]} {creator}" if creator in special_creators else creator,
-                value=creator
-            )
-            for creator in sorted_creators
-        ][:25]
+
+        choices = []
+        for creator in sorted_creators:
+            if len(choices) >= 25: break
+            name = creator
+            value = creator
+            if creator in special_creators:
+                name = f"{special_creators[creator]} {creator}"
+            choices.append(app_commands.Choice(name=name, value=value))
+
         await interaction.response.autocomplete(choices)
     except (discord.NotFound, discord.HTTPException):
         return []

@@ -103,7 +103,7 @@ async def _send_top_board(interaction: discord.Interaction):
     if first_user_obj:
         embed.set_thumbnail(url=first_user_obj.display_avatar.url)
 
-    bottom_embed = discord.Embed(color=discord.Color.green())
+    bottom_embed = discord.Embed(description="",color=discord.Color.green())
     for idx, cl in enumerate(clear_list):
         if idx == 0: continue
         user_obj = await get_user_by_id(interaction, cl.user_id)
@@ -122,4 +122,7 @@ async def _send_top_board(interaction: discord.Interaction):
             inline=True,
         )
 
-    await interaction.followup.send(embeds=[embed, bottom_embed], ephemeral=True)
+    if len(clear_list) == 1:
+        await interaction.followup.send(embed=embed, ephemeral=True)
+    else:
+        await interaction.followup.send(embeds=[embed, bottom_embed], ephemeral=True)

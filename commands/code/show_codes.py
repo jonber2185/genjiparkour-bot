@@ -67,7 +67,7 @@ async def show_codes_command(
 
 async def _send_code_status(interaction: discord.Interaction, code_info: CodeEntity):
     if code_info is None:
-        description = f"코드 `{code}` 에 대한 정보가 없습니다."
+        description = f"코드에 대한 정보가 없습니다."
     else:
         clear_time = f"*#{code_info.clear_time}초*" if code_info.clear_time else ""
         lines = [

@@ -11,8 +11,27 @@ from ..utils import code_autocomplete
 @app_commands.default_permissions(administrator=True)
 async def delete_code_command(interaction: discord.Interaction, code: str):
     await interaction.response.defer(ephemeral=True)
+    code = code.upper()
 
-    code_service.delete_code(code.upper())
+    code_info = code_service.get_code(code)
+    if code_info is None:
+        embed = discord.Embed(
+            title="❌ 코드 삭제 실패",
+            description=f"`{code}` 는 없는 코드입니다.",
+            color=discord.Color.green(),
+        )
+        await interaction.followup.send(embed=embed, ephemeral=True)
+        return
+    elif 'DOLCE' in code_info.creator:
+        embed = discord.Embed(
+            title="😁 코드 삭제 실패",
+            description=f"**갓맵**(돌체맵)은 삭제할 수 없습니다. ^___^",
+            color=discord.Color.green(),
+        )
+        await interaction.followup.send(embed=embed, ephemeral=True)
+        return
+
+    code_service.delete_code(code)
     code_autocomplete_service.load_memory()
 
     embed = discord.Embed(

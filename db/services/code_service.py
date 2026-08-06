@@ -11,7 +11,7 @@ class CodeService:
     def __init__(self):
         self.repository = code_repository
 
-    def get_code(self, code: str) -> CodeEntity:
+    def get_code(self, code: str) -> CodeEntity | None:
         if len(code) < _MIN_CODE_LENGTH:
             raise errors.DBError.DataValidationError("워크샵 코드는 5글자 이상이어야 합니다.")
         return self.repository.find_code(code)
